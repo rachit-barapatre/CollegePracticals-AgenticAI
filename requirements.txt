@@ -1,9 +1,20 @@
 # LangChain
 langchain>=0.3.27
-langchain-google-genai>=2.1.8
 
 # Google Gemini
+langchain-google-genai>=2.1.8
 google-genai>=1.30.0
+
+# ChromaDB
+langchain-chroma>=0.2.5
+chromadb>=1.0.0
+
+# Document Loading
+langchain-community>=0.3.27
+pypdf>=5.0.0
+
+# Text Splitting
+langchain-text-splitters>=0.3.9
 
 # Environment Variables
 python-dotenv>=1.1.0
