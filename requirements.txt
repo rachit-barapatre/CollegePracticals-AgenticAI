@@ -29,3 +29,6 @@ rich>=14.0.0
 
 streamlit
 reportlab
+
+fastapi
+uvicorn
