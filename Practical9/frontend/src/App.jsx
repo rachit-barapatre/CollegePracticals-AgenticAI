@@ -1,7 +1,8 @@
 
 import { useState } from "react";
 import "./App.css";
-const API_URL = import.meta.env.VITE_API_URL;
+
+const API_URL = (import.meta.env.VITE_API_URL || "").replace(/\/$/, "");
 
 function App() {
   const [goal, setGoal] = useState("");
@@ -15,14 +16,21 @@ function App() {
       return;
     }
 
+    if (!API_URL) {
+      setError("Backend API URL is not configured.");
+      return;
+    }
+
     setLoading(true);
     setError("");
     setResult(null);
 
     try {
-      const response = await (`${API_URL}/evaluate`, {
+      const response = await fetch(`${API_URL}/evaluate`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify({ goal }),
       });
 
@@ -44,22 +52,29 @@ function App() {
     <main className="app">
       <header className="header">
         <div className="logo">AI</div>
+
         <div>
           <h1>Agent Evaluation Studio</h1>
           <p>Planner · Executor · Evaluator</p>
         </div>
+
         <span className="status">● API Ready</span>
       </header>
 
       <section className="hero">
         <p className="eyebrow">PRACTICAL 09 · AGENTIC AI</p>
+
         <h2>Give your AI agent a goal.</h2>
+
         <p className="subtitle">
           Watch your multi-agent workflow plan, execute and evaluate tasks.
         </p>
 
         <div className="input-card">
-          <label htmlFor="goal">What should your AI agent accomplish?</label>
+          <label htmlFor="goal">
+            What should your AI agent accomplish?
+          </label>
+
           <textarea
             id="goal"
             value={goal}
@@ -67,9 +82,11 @@ function App() {
             placeholder="Example: Explain artificial intelligence and give three real-world applications."
             rows={4}
           />
+
           <button onClick={runAgent} disabled={loading}>
             {loading ? "Running AI Agent..." : "▶ Run AI Agent"}
           </button>
+
           {error && <p className="error">{error}</p>}
         </div>
       </section>
@@ -77,7 +94,9 @@ function App() {
       {loading && (
         <div className="loading">
           <div className="spinner" />
-          <p>AI agents are planning, executing and evaluating your goal...</p>
+          <p>
+            AI agents are planning, executing and evaluating your goal...
+          </p>
         </div>
       )}
 
@@ -86,23 +105,53 @@ function App() {
           <h2>Workflow Evaluation</h2>
 
           <div className="metrics">
-            <Metric title="Tasks Completed" value={`${result.tasks_completed}/${result.tasks_planned}`} />
-            <Metric title="Completion Rate" value={`${(result.task_completion_rate * 100).toFixed(0)}%`} />
-            <Metric title="Workflow Latency" value={`${result.workflow_latency_seconds}s`} />
-            <Metric title="Quality Score" value={`${result.quality_score ?? "N/A"}/5`} />
-            <Metric title="Accuracy Score" value={`${result.accuracy_score ?? "N/A"}/5`} />
+            <Metric
+              title="Tasks Completed"
+              value={`${result.tasks_completed}/${result.tasks_planned}`}
+            />
+
+            <Metric
+              title="Completion Rate"
+              value={`${(result.task_completion_rate * 100).toFixed(0)}%`}
+            />
+
+            <Metric
+              title="Workflow Latency"
+              value={`${result.workflow_latency_seconds}s`}
+            />
+
+            <Metric
+              title="Quality Score"
+              value={`${result.quality_score ?? "N/A"}/5`}
+            />
+
+            <Metric
+              title="Accuracy Score"
+              value={`${result.accuracy_score ?? "N/A"}/5`}
+            />
           </div>
 
           <h3>Task Execution</h3>
+
           {result.task_results?.map((task, index) => (
             <article className="task-card" key={index}>
               <div className="task-heading">
-                <strong>Task {index + 1}: {task.task}</strong>
-                <span className={task.status === "Success" ? "success" : "failed"}>
+                <strong>
+                  Task {index + 1}: {task.task}
+                </strong>
+
+                <span
+                  className={
+                    task.status === "Success" ? "success" : "failed"
+                  }
+                >
                   {task.status}
                 </span>
               </div>
-              <p>{task.output || task.error || "No output available."}</p>
+
+              <p>
+                {task.output || task.error || "No output available."}
+              </p>
             </article>
           ))}
 
