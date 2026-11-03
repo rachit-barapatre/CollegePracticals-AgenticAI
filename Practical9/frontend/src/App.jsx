@@ -1,6 +1,7 @@
 
 import { useState } from "react";
 import "./App.css";
+const API_URL = import.meta.env.VITE_API_URL;
 
 function App() {
   const [goal, setGoal] = useState("");
@@ -19,7 +20,7 @@ function App() {
     setResult(null);
 
     try {
-      const response = await fetch("http://127.0.0.1:8000/evaluate", {
+      const response = await (`${API_URL}/evaluate`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ goal }),
